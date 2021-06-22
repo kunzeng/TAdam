@@ -30,7 +30,7 @@ class TAdam(Optimizer):
             algorithm from the paper `On the Convergence of Adam and Beyond`_
             (default: False)
         up_lr(float, optional): upper learning rate
-        luw_lr(float, optional): lower learning rate 
+        low_lr(float, optional): lower learning rate 
 
     .. _A decreasing scaling transition scheme from Adam to SGD:
         https://arxiv.org/abs/2106.06749
