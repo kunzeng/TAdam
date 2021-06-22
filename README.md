@@ -7,8 +7,11 @@ The Pytorch implementation of TAdam algorithm in：'A decreasing scaling transit
 
 ```python
 from tadam import TAdam
+
 ...
+
 optimizer = TAdam(model.parameters(), lr=1e-3, iters=required, gamma=required, up_lr=0.3, low_lr=0.01)
+
 
 #iters(int, required): iterations
 #	iters = (testSampleSize / batchSize) * epoch
