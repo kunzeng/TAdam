@@ -10,14 +10,16 @@ from tadam import TAdam
 
 ...
 
-optimizer = TAdam(model.parameters(), lr=1e-3, iters=required, gamma=required, up_lr=0.3, low_lr=0.01)
+optimizer = TAdam(model.parameters(), lr=1e-3, iters=required, moment=1/4, up_lr=0.3, low_lr=0.01)
 
 
 #iters(int, required): iterations
 #	iters = (testSampleSize / batchSize) * epoch
 #
-#gamma(float, required): scaling factor
-#	eg. 10^(-2) = gamma^(iters/4)
+#moment(float, optional): transition moment
+#       moment = transition_iters / iters
+
+#set default value: moment=1/4, up_lr=0.3, low_lr=0.01
 ```
 
 

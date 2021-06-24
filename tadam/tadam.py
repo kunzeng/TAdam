@@ -15,10 +15,11 @@ class TAdam(Optimizer):
             parameter groups
             
         iters(int, required): iterations
-            iters = (testSampleSize / batchSize) * epoch
+            iters = (trainSampleSize / batchSize) * epoch
                     
         gamma(float, required): scaling factor
-            eg. 10^(-2) = gamma^(iters / 4)
+            eg. 10 ** (-2) = gamma ** (iters / 4)
+                gamma = 10 ** (-2 / (iters * moment))
         
         lr (float, optional): learning rate (default: 1e-3)
         betas (Tuple[float, float], optional): coefficients used for computing
@@ -29,6 +30,8 @@ class TAdam(Optimizer):
         amsgrad (boolean, optional): whether to use the AMSGrad variant of this
             algorithm from the paper `On the Convergence of Adam and Beyond`_
             (default: False)
+            
+        moment(float, optional): transition moment, moment = transition_iters / iters
         up_lr(float, optional): upper learning rate
         low_lr(float, optional): lower learning rate 
 
@@ -36,12 +39,12 @@ class TAdam(Optimizer):
         https://arxiv.org/abs/2106.06749
     """
 
-    def __init__(self, params, iters=required, gamma=required, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
-                 weight_decay=0, amsgrad=False, up_lr=0.3, low_lr=0.01):
-        if not 1.0 <= iters:
-            raise ValueError("Invalid iters: {}".format(gamma))              
-        if not (0.0 <= gamma and 1.0 >= gamma):
-            raise ValueError("Invalid gamma: {}".format(gamma))
+    def __init__(self, params, iters=required, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
+                 weight_decay=0, amsgrad=False, moment=1/4, up_lr=0.3, low_lr=0.01):
+        if not 1.0 < iters:
+            raise ValueError("Invalid iters: {}".format(iters))              
+        if not 0.0 < moment < 1:
+            raise ValueError("Invalid gamma: {}".format(moment))
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
@@ -62,7 +65,7 @@ class TAdam(Optimizer):
         super(TAdam, self).__init__(params, defaults)
         
         self.iters = iters
-        self.gamma = gamma
+        self.moment = moment
 
     def __setstate__(self, state):
         super(TAdam, self).__setstate__(state)
@@ -77,8 +80,10 @@ class TAdam(Optimizer):
                 and returns the loss.
         """
         loss = None
-        gamma = self.gamma
+        moment = self.moment
         iters = self.iters
+        gamma = 10 ** (-2 / (iters * moment))
+        
         if closure is not None:
             loss = closure()
 
