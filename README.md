@@ -10,7 +10,7 @@ from tadam import TAdam
 
 ...
 
-optimizer = TAdam(model.parameters(), lr=1e-3, iters=required, moment=1/4, up_lr=0.3, low_lr=0.01)
+optimizer = TAdam(model.parameters(), iters=required, lr=1e-3, moment=1/4, up_lr=0.3, low_lr=0.01)
 
 
 #iters(int, required): iterations
